@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+	<head>
+		<meta charset="utf-8">
+		<title>Department LEED Certifications</title>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+<style type="text/css">
+
+body {
+    background-color: #d8d8d8;
+    font-family: "Open Sans",Helvetica,Arial,sans-serif;
+    font-size: 10px;
+    }
+    
+    			svg {
+				background-color: #d8d8d8;
+			}
+    
+    h1 {
+        font-family: "Open Sans",Helvetica,Arial,sans-serif;  
+        font-size: 24px;
+        margin: 0;
+    }
+    
+    p {
+        font-family: "Open Sans",Helvetica,Arial,sans-serif;
+				font-size: 12px;
+				margin: 10px 0 0 0;
+			}
+    
+.labels {
+	font-size: 12px;
+	font-weight: bold;
+	fill: #000000;
+	}    
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #d8d8d8;
+  shape-rendering: crispEdges;
+}
+    
+.axis2 path,
+.axis2 line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}    
+
+.x.axis path {
+  display: none;
+}
+    
+    #tooltip {
+				position: absolute;
+				width: auto;
+				height: auto;
+				padding: 10px;
+				background-color: white;
+				-webkit-border-radius: 10px;
+				-moz-border-radius: 10px;
+				border-radius: 10px;
+				-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+				-moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+				box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+				pointer-events: none;
+			}
+			
+			#tooltip.hidden {
+				display: none;
+			}
+			
+			#tooltip p {
+				margin: 0;
+				font-family: sans-serif;
+				font-size: 12px;
+				line-height: 20px;
+			}
+
+</style>
+        
+</head>        
+<body>
+ <h2>Department LEED Certifications</h2>
+<p>Number of LEED certified buildings by type for each department.</p>
+<p><em>Hover your mouse over a bars for details.</em></p>      
+    <div id="tooltip" class="hidden"></div>
+
+<script>
+
+var margin = {top: 50, right: 20, bottom: 40, left: 80},
+    width = 1200 - margin.left - margin.right,
+    height = 800 - margin.top - margin.bottom;
+    
+var xScale = d3.scale.linear()
+            .rangeRound([0, width-100]);    
+
+var yScale = d3.scale.ordinal()
+            .rangeRoundBands([0, height - margin.top - margin.bottom], .2);
+
+var colorScale = d3.scale.ordinal()
+    .range(["#c49c94", "#98df8a",  "#c7c7c7", "#e7cb94", "#9edae5"])
+;
+
+var xAxis = d3.svg.axis()
+    .scale(xScale)
+    .tickSize(-810)
+    .orient("top");
+    
+var xAxis2 = d3.svg.axis()
+    .scale(xScale)
+    .orient("bottom")
+    //.tickSize(-height)
+;    
+
+var yAxis = d3.svg.axis()
+    .scale(yScale)
+    .orient("left");
+
+var svg = d3.select("body")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.csv("data/LEED-2014.csv", function(error, data) {
+  
+colorScale.domain(d3.keys(data[0]).filter(function(key) { return key !== "year"; }));
+
+  //    
+  data.forEach(function(d) {
+    var x0 = 0;
+    d.foo = colorScale.domain().map(function(colorGroup) { 
+        return {colorGroup: colorGroup, x0: x0, x1: x0 += +d[colorGroup]}; });
+    d.total = d.foo[d.foo.length - 1].x1;});
+
+    // d.total is the sum of the values for each row,
+ 
+  xScale.domain([0, d3.max(data, function(d) { return d.total; })]);    
+  yScale.domain(data.map(function(d) { return d.year; }));
+
+ //    
+  var year = svg.selectAll(".year")
+      .data(data)
+      .enter()
+      .append("g")
+      .attr("class", "g")
+      .attr("transform", function(d) { return "translate(0," + yScale(d.year) + ")"; });
+    
+    
+   // ******* X AXES *******    
+
+    // Top X Axis
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + 0 + ")")
+      .call(xAxis)
+      .append("text")
+      .attr({
+      "class": "labels",
+      x: width/2,
+      y: -30,
+        })
+      .text("Number of Buildings"); 
+    
+    // Bottom X Axis
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + 1615 + ")")
+      .call(xAxis2);
+
+// Stacked bars    
+  year.selectAll("rect")
+      .data(function(d) { return d.foo; })
+      .enter()
+      .append("rect")
+      .attr("height", yScale.rangeBand())
+      .attr("x", function(d) {return xScale(d.x0); })
+      .attr("width", function(d) { 
+        return xScale(d.x1) - xScale(d.x0); 
+        })
+      .style("fill", function(d) { return colorScale(d.colorGroup); })
+      .append("title")
+					.text(function(d) {
+                        var foo = d.x1 - d.x0;
+                       
+						return foo + " buildings " + d.colorGroup + ".";
+					});
+    
+
+// // ******* Y AXIS *******    
+  svg.append("g")
+      .attr("class", "y axis")
+      .attr("transform", "translate(0,0)")
+      .call(yAxis);   
+    
+  // ******* LEGEND *******
+  var legend = svg.selectAll(".legend")
+      .data(colorScale.domain().slice())
+      .enter()
+      .append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(-90," + i * 17 + ")"; });
+
+  legend.append("rect")
+      .attr("x", width)
+      .attr("width", 10)
+      .attr("height", 10)
+      .style("fill", colorScale);
+
+  legend.append("text")
+      .attr("x", width+20)
+      .attr("y", 6)
+      .attr("dy", ".35em")
+      .text(function(d) { return d; });
+
+});
+
+</script>

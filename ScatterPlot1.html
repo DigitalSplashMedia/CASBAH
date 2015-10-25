@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Sustainability Metrics by ZIP Code</title>
+		<script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
+		<style type="text/css">
+			
+			body {
+				background-color: #d8d8d8;
+				font-family: Helvetica, Arial, sans-serif;
+			}
+
+
+			h1 {
+				font-size: 24px;
+				margin: 0;
+			}
+
+			p {
+				font-size: 14px;
+				margin: 10px 0 0 0;
+			}
+            
+            p.xAxisLabel{
+                text-align: center;
+                font-weight: bold;
+            }
+
+			svg {
+				background-color: #d8d8d8;
+			}
+
+			circle:hover {
+				fill: red;
+			}
+            
+            .labels {
+				font-size: 14px;
+                text-align: center;
+				font-weight: bold;
+				fill: #000000;
+			}
+			
+			.axis path,
+			.axis line {
+				fill: none;
+				stroke: black;
+				shape-rendering: crispEdges;
+			}
+			
+			.axis text {
+				font-family: sans-serif;
+				font-size: 11px;
+			}
+            
+            #tooltip {
+				position: absolute;
+				width: auto;
+				height: auto;
+				padding: 10px;
+				background-color: white;
+				-webkit-border-radius: 10px;
+				-moz-border-radius: 10px;
+				border-radius: 10px;
+				-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+				-moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+				box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+				pointer-events: none;
+			}
+			
+			#tooltip.hidden {
+				display: none;
+			}
+			
+			#tooltip p {
+				margin: 0;
+				font-family: sans-serif;
+				font-size: 12px;
+				line-height: 20px;
+			}
+
+		</style>
+	</head>
+	<body>
+	<h1>Sustainability Metrics by ZIP Code</h1>
+
+		<p></p>
+		<div id="tooltip" class="hidden">			
+			<p><span id="value">100</span></p>
+		</div>
+		<script type="text/javascript">		
+			var w = 1000;
+			var h = 600;
+			var padding = [ 50, 10, 100, 100 ];  //Top, right, bottom, left
+            
+            var  colors = ['rgb(255,255,255)','rgb(32,191,231)','rgb(29,197,60)','rgb(144,207,40)','rgb(239,232,15)','rgb(254,201,46)','rgb(246,91,30)','rgb(166,14,14)'];
+			var xScale = d3.scale.linear()
+								.range([ padding[3], w - padding[1] - padding[3] ]);			
+			var yScale = d3.scale.linear()
+								.range([ padding[0], h - padding[2] ]);
+            var zScale = d3.scale.linear()
+								.range([ 10, 500 ]);
+			var xAxis = d3.svg.axis()
+							.scale(xScale)
+							.orient("bottom")
+							.ticks(15);
+			var yAxis = d3.svg.axis()
+							.scale(yScale)
+							.orient("left")
+							.tickFormat(function(d) {
+								return d;
+							});
+			var svg = d3.select("body")
+						.append("svg")
+						.attr("width", w)
+						.attr("height", h);
+
+			d3.csv("data/ZIP-code-metrics.csv", function(data) {
+
+				xScale.domain([ 
+					d3.min(data, function(d) {
+						return +d.GridPurchase2014;
+					}), 
+					d3.max(data, function(d) {
+						return +d.GridPurchase2014;
+					})
+				]);
+
+				yScale.domain([
+					d3.max(data, function(d) {
+						return +d.WaterUse2014;
+					}),
+					d3.min(data, function(d) {
+						return +d.WaterUse2014;
+					})
+				]);
+                
+ 				zScale.domain([
+					d3.min(data, function(d) {
+						return +d.SiteEnergyUse2014;
+					}),
+					d3.max(data, function(d) {
+						return +d.SiteEnergyUse2014;
+					})
+				]);               
+
+				var circles = svg.selectAll("circle")
+								.data(data)
+								.enter()
+								.append("circle");
+                
+                //DRAW THE CIRCLES
+				circles.attr("cx", function(d) {
+						return xScale(d.GridPurchase2014);
+					})
+					.attr("cy", function(d) {
+						return yScale(d.WaterUse2014);
+					})
+                    .attr("r", function(d) {
+			   		return Math.sqrt(zScale(d.SiteEnergyUse2014));
+			         })
+
+//                    .attr("fill", function(d) {
+//					return "rgb("+ (Math.floor(d.SiteEnergyUse2014) * .1) + ",122,255)"})
+ 
+                .attr("fill", function(d) { 
+                    if ((d.SiteEnergyUse2014 >= 0) && (d.SiteEnergyUse2014 < 1000)){ 
+					 return colors[1]
+                    } else if ((d.SiteEnergyUse2014 >= 1000) && (d.SiteEnergyUse2014 < 10000)){
+                     return   colors[2]
+                    } else if ((d.SiteEnergyUse2014 >= 10000) && (d.SiteEnergyUse2014 < 100000)) {
+                     return colors[3]  
+                    } else if ((d.SiteEnergyUse2014 >= 100000) && (d.SiteEnergyUse2014 < 1000000)) {
+                        return colors[4]   
+                    } else if ((d.SiteEnergyUse2014 >= 1000000) && (d.SiteEnergyUse2014 < 10000000)) {
+                        return colors[5]   
+                    } else if ((d.SiteEnergyUse2014 >= 10000000) && (d.SiteEnergyUse2014 < 100000000)) {
+                        return colors[6]   
+                    } else if (d.SiteEnergyUse2014 >= 100000000) {
+                        return colors[7]   
+                    }else {
+                        return colors[0]   
+                    }
+                    })
+                
+                    .attr("opacity",0.7)  
+                
+                    .on("mouseover", function(d) {
+                    
+					//Get this dot's cx/cy values
+					var xPosition = parseFloat(d3.select(this).attr("cx")) + 20;
+					var yPosition = parseFloat(d3.select(this).attr("cy")) + 80;
+                    
+					//Update the tooltip position and value
+					d3.select("#tooltip")
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						.select("#value")
+						.html("<b>"+d.ZIP+"</b>" + "<br>Grid Use: " + d.GridPurchase2014 + " kWh: <br> Total Site Energy Use: " + d.SiteEnergyUse2014 + " kBtu <br>Water Use: "+d.WaterUse2014 + " kgal ");
+			   
+					//Show the tooltip
+					d3.select("#tooltip").classed("hidden", false);
+
+			   })
+			   .on("mouseout", function() {
+			   
+					//Hide the tooltip
+					d3.select("#tooltip").classed("hidden", true);
+					
+			   });
+                //DRAW THE CIRCLES
+                
+//  				circles.transition()
+//                    .delay(function(d, i) {
+//						return i * 5;
+//					})
+//					.duration(500)
+//					.attr("r", function(d) {
+//			   		return Math.sqrt(zScale(d.SiteEnergyUse2014));
+//			         })
+//                    .attr("cy", function(d) {
+//						return yScale(d.WaterUse2014);
+//					})
+//                ;              
+                
+                svg.append("g")
+					.attr("class", "x axis")
+					.attr("transform", "translate(0," + (h - padding[2] + 10) + ")")
+					.call(xAxis)
+                    .append("text")
+					.attr({
+						"class": "labels",
+						x: w/2-30,
+						y: 40,
+					})
+					.text("Grid Use")
+                ;
+
+				svg.append("g")
+					.attr("class", "y axis")
+					.attr("transform", "translate(" + (padding[3] - 10) + ",0)")
+					.call(yAxis)
+                    .append("text")
+					.attr({
+                        "class": "labels",
+						"transform": "rotate(-90)",
+						x: -h/2-30,
+						y: -60,
+					})
+					.text("Water Use (years)")
+                ;
+
+			});
+          
+		</script>
+<!--        <p class="xAxisLabel">Mean Years of Schooling</p>-->
+        
+        
+	</body>
+</html>

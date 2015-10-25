@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>D3 Basics</title>
+    <script type="text/javascript" src="../d3.v3.js"></script>
+<!--  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>-->
+    
+    <LINK href="style2.css" rel="stylesheet" type="text/css">
+<!--
+  <style>
+  body{
+    font:12px arial;
+  }
+
+  h1,h4{
+    margin-left:50px;
+  }
+
+  .axis line, .axis path{
+    fill:none;
+    stroke:black;
+  }
+
+  #tooltip{
+    position:absolute;
+    background:whitesmoke;
+    padding:2px 6px;
+    border-radius:5px;
+    font-weight:bold;
+  }
+
+  .hide{
+    display:none;
+  }
+
+  path:hover{
+    cursor:pointer;
+    stroke:orange;
+  }
+  .high{
+    stroke:red;
+  }
+  .low{
+    stroke:green;
+  }
+      
+      .axis path,
+			.axis line {
+				fill: none;
+				stroke: #cccccc;;
+				shape-rendering: crispEdges;
+			}
+			
+			.axis text {
+				font-family: "Open Sans",Arial,sans-serif;
+				font-size: 11px;
+			}
+
+  </style>
+-->
+</head>
+<body>
+<!--
+				<h2>Site Energy Use by Building</h2>
+        <p>Total site energy use (kBtu) by building, 2013 - 2014</p>
+-->
+<!--
+        <p>Choose a department:</p>
+        <select id = "options">
+
+<option value="CAL TRANS">CAL TRANS</option>
+<option value="CDCR" selected="CDCR">CDCR</option>
+<option value="DGS">DGS</option>  
+<option value="DSH">DSH</option>  
+<option value="HCD" >July</option>      
+
+    </select> 
+-->
+		<p></p>
+
+<div id="tooltip" class="hide">
+
+</div>
+
+<script>
+  window.onload = function(){
+    // margin convention
+    var margin = {
+      top:20,
+      right:30,
+      bottom:20,
+      left:80
+    }
+
+    var width = 300-margin.left-margin.right;
+    var height = 300 - margin.top - margin.bottom;
+    // basic variables
+    var svg = d3.select("body")
+            .append("svg")
+              .attr({
+                "width": width+margin.left+margin.right,
+                "height": height + margin.top + margin.bottom
+              })
+            .append("g")
+              .attr("transform", "translate("+ margin.left + "," + margin.top + ")")
+
+    // scales and axis
+    var xScale = d3.time.scale()
+                .range([0,width]);
+    var yScale = d3.scale.linear()
+                .range([0,height]);
+
+    // time format
+    var dateFormat = d3.time.format("%Y");
+
+    var xAxis = d3.svg.axis()
+                .scale(xScale)
+                .orient("bottom")
+                .ticks(2)
+                .tickFormat(function(d){
+                  return dateFormat(d)
+                });
+
+//    var yAxis = d3.svg.axis()
+//                .scale(yScale)
+//                .orient("left")
+//                .tickFormat(function(d){
+//                  return d;
+//                })
+    
+    var yAxis = d3.svg.axis()
+                    .scale(yScale)
+				    .orient("left");
+
+
+    // load data
+    d3.csv("data/DGS-Site-Energy-Use.csv", function(data){
+      // reconstruct data
+      var years = d3.range("2013","2015");
+        console.log(years);
+      years = years.map(function(d){
+        return d+"";
+      })
+
+      var dataset = [];
+
+      for(var i=0;i<data.length;i++){
+        dataset[i] = {
+          Building: data[i].Building,
+          rates:[]
+        }
+
+        for(var j=0;j<years.length;j++){
+          if(data[i][years[j]]){
+            dataset[i].rates.push({
+              year: years[j],
+              rate: data[i][years[j]]
+            })
+          }
+        }
+      }
+
+      // set domains
+
+      xScale.domain([
+        d3.min(years, function(d){
+          return dateFormat.parse(d)
+        }),
+        d3.max(years, function(d){
+          return dateFormat.parse(d)
+        })
+      ])
+
+      yScale.domain([
+        d3.max(dataset,function(d){
+          return d3.max(d.rates, function(d){
+            return +d.rate;
+          })
+        }),
+        d3.min(dataset,function(d){
+          return d3.max(d.rates, function(d){
+            return (+d.rate) - 15 ;
+          })
+        })
+      ])
+
+      // render data
+
+      var groups = svg.selectAll("g")
+                  .data(dataset)
+                  .enter()
+                    .append("g");
+
+      groups.attr("name",function(d){
+            return d.Building;
+          })
+      
+      console.log(groups);
+      
+      // line generator
+      var line = d3.svg.line()
+                  .x(function(d){
+                    return xScale(dateFormat.parse(d.year))
+                  })
+                  .y(function(d){
+                    return yScale(+d.rate)
+                  })
+
+      // draw line
+      groups.selectAll("path")
+            .data(function(d){
+              return [d.rates]; //use arrays to draw lines
+            })
+            .enter()
+            .append("path")
+            .attr("d", line) //use line generator
+            .attr({
+              "class":"line",
+              "fill":"none",
+              "stroke":"steelblue",
+              "stroke-width":"2"
+            })
+            .classed("high",function(d){
+                var max = d3.max(d, function(d){
+                  return d.rate;
+                })
+                if(max > 180000000){
+                  return true;
+                }else {
+                  return false;
+                }
+            })
+            .classed("low",function(d){
+                var max = d3.max(d, function(d){
+                  return d.rate;
+                })
+                if(max < 80000000){
+                  return true;
+                }else {
+                  return false;
+                }
+            })
+            .on("mouseover",function(d){
+              var xPos = parseFloat(width+margin.left+margin.right)-10;
+              var lastRate = +d[d.length-1].rate;
+
+              var yPos = parseFloat(yScale(lastRate)) + 90;
+
+              var deptName = d3.select(this.parentNode).attr("name")
+
+              d3.select("#tooltip")
+                .style("left", xPos+"px")
+                .style("top", yPos+"px")
+                .html("<p>"+deptName+"</p>")
+                .classed("hide",false)
+            })
+            .on("mouseout",function(d){
+              d3.select("#tooltip").classed("hide",true)
+            })
+
+
+     //axe
+
+     svg.append("g")
+         .attr("class","x axis")
+         .attr("transform", "translate(0,"+ height + ")")
+         .call(xAxis)
+
+     svg.append("g")
+         .attr("class","y axis")
+         .call(yAxis)
+
+
+    })
+
+
+
+
+
+  };
+</script>
+
+
+</body>
+</html>

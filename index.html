@@ -1,0 +1,387 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+	<title>CASBAH (CA Sustainable Buildings Analysis Helper)</title> 
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+    <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
+    
+     		<style type="text/css">
+			
+			body {
+				background-color: white;
+				font-family: "Open Sans",Arial,sans-serif;
+			}
+                
+                #chartDivOne {
+                    width: 400px;
+                    float: left;
+                    
+                }
+                
+                #chartDivTwo {
+                    width: 400px;
+                    float: left;
+                    
+                }
+                
+                #chartDivThree {
+                    width: 400px;
+                    float: left;
+                    
+                }
+  
+                #chartDivFull1 {
+                    width: 1500px;
+                    float: left;
+                    
+                }
+                
+                #chartDivFull2 {
+                    width: 1500px;
+                    float: left;
+                    
+                }            
+                
+                #chartDivFour {
+                    width: 400px;
+                    float: left;
+                    
+                }
+                
+                #chartDivFive {
+                    width: 400px;
+                    float: left;
+                    
+                }
+                
+                #chartDivSix {
+                    width: 400px;
+                    float: left;
+                    
+                }
+                
+                #chartDivSeven {
+                    width: 400px;
+                    float: left;
+                    
+                }
+                
+                #chartDivEight {
+                    width: 400px;
+                    float: left;
+                    
+                }
+                
+                #chartDivNine {
+                    width: 400px;
+                    float: left;
+                    
+                }
+                
+                
+                
+                #mapDivOne {
+                    width: 400px;
+                    float: left;
+                    
+                }
+                
+                #mapDivTwo {
+                    width: 400px;
+                    float: left;
+                    
+                }
+                
+                #mapDivThree {
+                    width: 400px;
+                    float: left;
+                    
+                }                
+                
+			h1 {
+				font-family: "Open Sans",Arial,sans-serif;
+                font-weight: bold;
+                font-size: 24px;
+				margin: 0;
+			}
+
+			h2 {
+				font-family: "Open Sans",Arial,sans-serif;
+                font-weight: bold;
+                font-size: 18px;
+				margin: 40px, 0px, 0px, 0px;
+			}
+            
+            h3{
+                font-family: "Open Sans",Arial,sans-serif;
+                font-weight: bold;
+                font-size: 12px;
+                margin: 5px;
+                color: #000000;
+            }            
+
+            p{
+                font-family: "Open Sans",Arial,sans-serif;
+                font-size: 13px;
+                margin: 5px;
+            }
+            
+            p.xAxisLabel{
+                text-align: center;
+                font-weight: bold;
+            }
+
+			svg {
+				background-color: white;
+			}
+
+			circle:hover {
+				fill: rgb(204,179,123);
+			}
+                
+            .deptselector{
+                width: 200px;
+            }
+            
+            .labels {
+				font-family: "Open Sans",Arial,sans-serif;
+                font-size: 14px;
+                text-align: center;
+				font-weight: bold;
+				fill: #000000;
+			}
+			
+			.axis path,
+			.axis line {
+				fill: none;
+				stroke: #cccccc;;
+				shape-rendering: crispEdges;
+			}
+			
+			.axis text {
+				font-family: "Open Sans",Arial,sans-serif;
+				font-size: 11px;
+			}
+            
+            #tooltip {
+				position: absolute;
+				width: auto;
+				height: auto;
+				padding: 10px;
+				background-color: white;
+				-webkit-border-radius: 10px;
+				-moz-border-radius: 10px;
+				border-radius: 10px;
+				-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+				-moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+				box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+				pointer-events: none;
+			}
+			
+			#tooltip.hidden {
+				display: none;
+			}
+			
+			#tooltip p {
+				margin: 0;
+				font-family: "Open Sans",Arial,sans-serif;
+				font-size: 12px;
+				line-height: 20px;
+			}
+
+		</style> 
+
+<body>
+ <div data-role="page" data-theme="b"> 
+     
+         <!-- /header -->
+	<div data-role="header" data-position="fixed">
+        <h1>CASBAH (CA Sustainable Buildings Analysis Helper)</h1>
+	</div><!-- /header -->
+
+    <!-- /content -->
+	<div data-role="content">	
+    
+        <!-- /ROW ONE DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW ONE DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW ONE DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW ONE DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW ONE DEPARTMENT COMPARISON METRICS -->
+        <h2>Compare Department Use Metrics</h2>    
+            <div id="chartDivOne">
+            <iframe src="http://localhost:8888/D3Projects/GGC/linechart-sitenergyuse.html" width="400" height="400" frameborder="0" scrolling="no"></iframe>
+        </div><!-- /chartDivOne -->
+        
+        		<div id="chartDivTwo">
+            <iframe src="http://localhost:8888/D3Projects/GGC/linechart-electricgriduse.html" width="400" height="400" frameborder="0" scrolling="no"></iframe> 
+        </div><!-- /chartDivTwo -->
+        
+        <div id="chartDivThree">
+            <iframe src="http://localhost:8888/D3Projects/GGC/linechart-wateruse.html" width="400" height="400" frameborder="0" scrolling="no"></iframe>  
+        </div><!-- /chartDivThree -->
+        
+        <!-- /ROW ONE DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW ONE DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW ONE DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW ONE DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW ONE DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW ONE DEPARTMENT COMPARISON METRICS -->
+        
+        <div style="clear:both;"></div>
+        
+            <!-- /ROW TWO DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW TWO DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW TWO DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW TWO DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW TWO DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW TWO DEPARTMENT COMPARISON METRICS -->
+        <h2>Compare Building Type Use Metrics</h2>    
+            <div id="chartDivSeven">
+            <iframe src="http://localhost:8888/D3Projects/GGC/linechart-bldgtype-sitenergyuse.html" width="400" height="400" frameborder="0" scrolling="no"></iframe>
+        </div><!-- /chartDivSeven -->
+        
+        <div id="chartDivEight">
+            <iframe src="http://localhost:8888/D3Projects/GGC/linechart-bldgtype-electricgriduse.html" width="400" height="400" frameborder="0" scrolling="no"></iframe>
+        </div><!-- /chartDivEight -->
+        
+        <div id="chartDivNine">
+            <iframe src="http://localhost:8888/D3Projects/GGC/linechart-bldgtype-wateruse.html" width="400" height="400" frameborder="0" scrolling="no"></iframe> 
+        </div><!-- /chartDivNine -->
+        
+        <!-- /ROW TWO DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW TWO DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW TWO DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW TWO DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW TWO DEPARTMENT COMPARISON METRICS -->
+        <!-- /ROW TWO DEPARTMENT COMPARISON METRICS -->
+        
+        <div style="clear:both;"></div>    
+        
+        <!-- /ROW THREE BUILDING COMPARISON METRICS -->
+        <!-- /ROW THREE BUILDING COMPARISON METRICS -->
+        <!-- /ROW THREE BUILDING COMPARISON METRICS -->
+        <!-- /ROW THREE BUILDING COMPARISON METRICS -->
+        <!-- /ROW THREE BUILDING COMPARISON METRICS -->
+        <!-- /ROW THREE BUILDING COMPARISON METRICS -->
+        <h2>Compare Building Use Metrics within a Department</h2> 
+        <p></p>
+        <!-- /chartDivFour -->
+        <div id="chartDivFour">
+        <h2>Site Energy Use by Building</h2>
+        <p>Total site energy use (kBtu) by building, 2013 - 2014</p>
+             <p>Choose a department:</p>
+        <div class="deptselector">
+<!--            <form name="change">-->
+<SELECT NAME="options" ONCHANGE="document.getElementById('siteenergyuse').src = this.options[this.selectedIndex].value">
+    
+<option value="http://localhost:8888/D3Projects/GGC/linechart-CalTrans-siteenergyuse.html">CAL TRANS</option>
+<option value="http://localhost:8888/D3Projects/GGC/linechart-CDCR-siteenergyuse.html">CDCR</option>
+    <option value="http://localhost:8888/D3Projects/GGC/linechart-DGS-siteenergyuse.html">DGS</option>
+    
+</SELECT>
+<!--    </form>-->
+            </div>
+<iframe src="http://localhost:8888/D3Projects/GGC/linechart-CalTrans-siteenergyuse.html"  id="siteenergyuse" width="400" height="400" frameborder="0" scrolling="no"></iframe>
+        
+        
+        </div><!-- /chartDivFour -->
+  
+        <div id="chartDivFive">
+            <h2>Electric Grid Use by Building</h2>
+        <p>Electric grid use (kWh) by building, 2013 - 2014</p>
+        <p>Choose a department:</p>
+            <div class="deptselector">
+            <!--            <form name="change">-->
+<SELECT NAME="options2" ONCHANGE="document.getElementById('electricgriduse').src = this.options[this.selectedIndex].value">
+    
+<option value="http://localhost:8888/D3Projects/GGC/linechart-CalTrans-electricgriduse.html">CAL TRANS</option>
+<option value="http://localhost:8888/D3Projects/GGC/linechart-CDCR-electricgriduse.html">CDCR</option>
+    <option value="http://localhost:8888/D3Projects/GGC/linechart-DGS-electricgriduse.html">DGS</option>
+</SELECT>
+<!--    </form>-->
+            </div>
+<iframe src="http://localhost:8888/D3Projects/GGC/linechart-CalTrans-electricgriduse.html"  id="electricgriduse" width="400" height="400" frameborder="0" scrolling="no"></iframe>
+
+        
+        </div><!-- /chartDivFive -->
+        
+        <div id="chartDivSix">
+            <h2>Water Use by Building</h2>
+        <p>Total water use (kgal) by building, 2013 - 2014</p>
+        <p>Choose a department:</p>
+            <div class="deptselector">
+        <!--            <form name="change">-->
+<SELECT NAME="options2" ONCHANGE="document.getElementById('wateruse').src = this.options[this.selectedIndex].value">
+    
+<option value="http://localhost:8888/D3Projects/GGC/linechart-CalTrans-wateruse.html">CAL TRANS</option>
+<option value="http://localhost:8888/D3Projects/GGC/linechart-CDCR-wateruse.html">CDCR</option>
+    <option value="http://localhost:8888/D3Projects/GGC/linechart-DGS-wateruse.html">DGS</option>
+</SELECT>
+<!--    </form>-->
+            </div>
+<iframe src="http://localhost:8888/D3Projects/GGC/linechart-CalTrans-electricgriduse.html"  id="wateruse" width="400" height="400" frameborder="0" scrolling="no"></iframe>
+            
+
+            
+        </div><!-- /chartDivSix -->    
+        
+        <!-- /ROW THREE BUILDING COMPARISON METRICS -->
+        
+        <div style="clear:both;"></div>
+        
+
+    
+<h2>Maps</h2>
+ 
+    <div id="mapDivOne">
+        <h3>Site Energy Use</h3><br>
+<iframe width="380" height="520" frameborder="0" src="https://digitalsplashmedia.cartodb.com/viz/be00922e-7a79-11e5-8374-0e31c9be1b51/embed_map" allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe>
+        </div><!-- /mapDivOne -->
+        
+    <div id="mapDivTwo">
+        <h3>Electricity Use - Grid Purchased</h3><br>
+        
+<iframe width="380" height="520" frameborder="0" src="https://digitalsplashmedia.cartodb.com/viz/6eafff00-7a7b-11e5-9537-0ecfd53eb7d3/embed_map" allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe>
+        </div><!-- /mapDivTwo -->        
+
+  
+    <div id="mapThree">
+        <h3>Water Use</h3><br>
+
+<iframe width="380" height="520" frameborder="0" src="https://digitalsplashmedia.cartodb.com/viz/3bc5c2ae-7a77-11e5-a3f3-0e3ff518bd15/embed_map" allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe>
+        </div><!-- /mapDivThree -->
+        
+<div style="clear:both;"></div>
+        
+        
+        
+        
+        
+<!-- /chartDivFull1 -->        
+<div id="chartDivFull1">         
+<iframe src="http://localhost:8888/D3Projects/GGC/Dept-LEED.html" width="1200" height="820" frameborder="0" scrolling="no"></iframe>
+</div><!-- /chartDivFull1 -->
+        
+<div id="chartDivFull2">         
+<iframe src="http://localhost:8888/D3Projects/GGC/ScatterPlot1.html" width="1200" height="700" frameborder="0" scrolling="no"></iframe>
+</div><!-- /chartDivFull2 -->        
+        
+        
+<h2>Water Use Flow Department - Building Type</h2><br>        
+<div align="center">       
+<iframe src="http://localhost:8888/D3Projects/GGC/DeptBuildingTypeWaterFlow2014.html" width="1100" height="5600" frameborder="0" scrolling="no"></iframe>     
+</div>         
+        
+    <div style="clear:both;"></div>
+
+    </div><!-- /content --> 
+         <!-- /footer -->
+	<div data-role="footer" data-position="fixed">
+		<p></p>
+	</div><!-- /footer -->
+</div> <!-- /page -->    
+</body>
+</html>
